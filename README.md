@@ -87,14 +87,16 @@ npm run build
 | `git push` | Đẩy code lên repository |
 | `git branch` | Kiểm tra nhánh hiện tại |
 
-## 8. Lưu ý
+## 8. Lưu ý khi làm việc nhóm
 
 1. Không đưa thư mục `node_modules` lên GitHub.
 2. Không xóa file `package.json` và `package-lock.json`.
 3. Khi có thay đổi dependencies, cần chạy lại `npm install`.
-4. Trước khi phát triển chức năng, cần cập nhật code mới nhất.
-5. Mỗi thành viên nên làm việc trên nhánh được phân công.
-6. Kiểm tra build trước khi commit và push code.
+4. Trước khi bắt đầu phát triển, cần cập nhật source code mới nhất.
+5. Mỗi thành viên nên làm việc trên nhánh cá nhân được phân công.
+6. **Khi cập nhật code, ưu tiên đồng bộ từ nhánh `develop` trước, sau đó mới cập nhật từ nhánh `main` khi cần thiết theo quy trình của nhóm.**
+7. Không tự ý push trực tiếp lên nhánh `develop` hoặc `main`.
+8. Kiểm tra build trước khi commit và push code.
 
 ---
 
