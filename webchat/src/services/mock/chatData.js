@@ -1,9 +1,22 @@
+
 export const currentUser = {
     id: 1,
     name: "Alex Morgan",
     avatar: "https://i.pravatar.cc/150?img=12",
     status: "online",
 };
+
+// Tạo timestamp cho dữ liệu giả lập.
+// dayOffset = 0: hôm nay
+// dayOffset = 1: hôm qua
+function createTimestamp(hour, minute, dayOffset = 0) {
+    const date = new Date();
+
+    date.setDate(date.getDate() - dayOffset);
+    date.setHours(hour, minute, 0, 0);
+
+    return date.getTime();
+}
 
 export const conversations = [
     {
@@ -13,6 +26,7 @@ export const conversations = [
         status: "online",
         lastMessage: "That sounds great! Let's do it.",
         time: "09:42",
+        timestamp: createTimestamp(9, 42),
         unread: 2,
         type: "personal",
     },
@@ -23,6 +37,7 @@ export const conversations = [
         status: "online",
         lastMessage: "Michael: The new design is ready.",
         time: "09:15",
+        timestamp: createTimestamp(9, 15),
         unread: 5,
         type: "group",
     },
@@ -33,6 +48,7 @@ export const conversations = [
         status: "offline",
         lastMessage: "Thank you for your help!",
         time: "Yesterday",
+        timestamp: createTimestamp(16, 30, 1),
         unread: 0,
         type: "personal",
     },
@@ -43,6 +59,7 @@ export const conversations = [
         status: "online",
         lastMessage: "See you tomorrow.",
         time: "Yesterday",
+        timestamp: createTimestamp(14, 20, 1),
         unread: 0,
         type: "personal",
     },
@@ -53,6 +70,7 @@ export const conversations = [
         status: "offline",
         lastMessage: "You: I will check it.",
         time: "Mon",
+        timestamp: createTimestamp(10, 0, 2),
         unread: 0,
         type: "group",
     },
@@ -63,11 +81,13 @@ export const conversations = [
         status: "offline",
         lastMessage: "Can we talk later?",
         time: "Sun",
+        timestamp: createTimestamp(15, 30, 3),
         unread: 0,
         type: "personal",
     },
 ];
 
+// Dữ liệu tin nhắn mẫu
 export const initialMessages = {
     1: [
         {
@@ -75,30 +95,35 @@ export const initialMessages = {
             senderId: 2,
             content: "Hey Alex! How are you doing today?",
             time: "09:30",
+            sentAt: createTimestamp(9, 30),
         },
         {
             id: 2,
             senderId: 1,
             content: "I'm doing great! Just finished working on the new project.",
             time: "09:32",
+            sentAt: createTimestamp(9, 32),
         },
         {
             id: 3,
             senderId: 2,
             content: "That's awesome! How is the progress going?",
             time: "09:35",
+            sentAt: createTimestamp(9, 35),
         },
         {
             id: 4,
             senderId: 1,
             content: "Everything is going well. The UI design is almost complete.",
             time: "09:38",
+            sentAt: createTimestamp(9, 38),
         },
         {
             id: 5,
             senderId: 2,
             content: "That sounds great! Let's do it.",
             time: "09:42",
+            sentAt: createTimestamp(9, 42),
         },
     ],
 
@@ -108,12 +133,14 @@ export const initialMessages = {
             senderId: 2,
             content: "The new design is ready.",
             time: "09:10",
+            sentAt: createTimestamp(9, 10),
         },
         {
             id: 2,
             senderId: 1,
             content: "Great! I'll review it shortly.",
             time: "09:15",
+            sentAt: createTimestamp(9, 15),
         },
     ],
 
@@ -123,6 +150,7 @@ export const initialMessages = {
             senderId: 2,
             content: "Thank you for your help!",
             time: "Yesterday",
+            sentAt: createTimestamp(16, 30, 1),
         },
     ],
 
@@ -132,6 +160,7 @@ export const initialMessages = {
             senderId: 2,
             content: "See you tomorrow.",
             time: "Yesterday",
+            sentAt: createTimestamp(14, 20, 1),
         },
     ],
 
@@ -141,6 +170,7 @@ export const initialMessages = {
             senderId: 1,
             content: "I will check it.",
             time: "Monday",
+            sentAt: createTimestamp(10, 0, 2),
         },
     ],
 
@@ -150,6 +180,7 @@ export const initialMessages = {
             senderId: 2,
             content: "Can we talk later?",
             time: "Sunday",
+            sentAt: createTimestamp(15, 30, 3),
         },
     ],
 };

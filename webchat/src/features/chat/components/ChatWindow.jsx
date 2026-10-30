@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-
 import {
     Phone,
     Video,
@@ -9,6 +8,7 @@ import {
     Send,
     Image,
     Plus,
+    MessageCirclePlus,
 } from "lucide-react";
 
 function ChatWindow({
@@ -16,8 +16,14 @@ function ChatWindow({
     messages,
     currentUser,
     onSendMessage,
-}) {
+    onSimulateIncoming,
+    conversations,
+}) {   
     const [message, setMessage] = useState("");
+
+    const [showSenderPicker, setShowSenderPicker] = useState(false);
+        
+    const [selectedSenderId, setSelectedSenderId] = useState("");
 
     const messagesEndRef = useRef(null);
 
@@ -28,10 +34,11 @@ function ChatWindow({
     }, [messages]);
 
     const handleSend = () => {
-        if (!message.trim()) return;
+        const content = message.trim();
 
-        onSendMessage(message.trim());
+        if (!content || !conversation) return;
 
+        onSendMessage(content);
         setMessage("");
     };
 
@@ -114,9 +121,46 @@ function ChatWindow({
                         <MoreHorizontal size={21} />
                     </button>
 
+                    <button className="icon-button" title="Simulate incoming message" onClick={() => setShowSenderPicker((prev) => !prev)}>
+                        <MessageCirclePlus size={19} />
+                    </button>
+
                 </div>
 
             </header>
+
+            {showSenderPicker && (
+                <div className="mock-sender-picker">
+                    <h4>Simulate Incoming Message</h4>
+
+                    <select
+                        value={selectedSenderId}
+                        onChange={(e) => setSelectedSenderId(e.target.value)}
+                    >
+                        <option value="">Select sender</option>
+
+                        {conversations.map((item) => (
+                            <option key={item.id} value={item.id}>
+                                {item.name}
+                            </option>
+                        ))}
+                    </select>
+
+                    <button
+                        onClick={() => {
+                            if (!selectedSenderId) return;
+
+                            onSimulateIncoming(Number(selectedSenderId));
+
+                            setShowSenderPicker(false);
+                            setSelectedSenderId("");
+                        }}
+                        disabled={!selectedSenderId}
+                    >
+                        Simulate Message
+                    </button>
+                </div>
+            )}
 
             {/* Messages */}
             <section className="message-container">
