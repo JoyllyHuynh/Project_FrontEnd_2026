@@ -1,15 +1,9 @@
-
-import { useState } from "react";
-
+import { useRef, useState } from "react";
 import Sidebar from "./Sidebar";
 import ConversationList from "../../features/chat/components/ConversationList";
 import ChatWindow from "../../features/chat/components/ChatWindow";
-
-import {
-    currentUser,
-    conversations as initialConversations,
-    initialMessages,
-} from "../../services/mock/chatData";
+import {getReplyDelay,createIncomingMessage,generateAutoReply,generateIncomingContent} from "../../features/chat/services/chatMockService";
+import {currentUser,conversations as initialConversations,initialMessages,} from "../../services/mock/chatData";
 
 function MainLayout() {
     // Danh sách hội thoại
@@ -18,7 +12,9 @@ function MainLayout() {
     );
 
     // Hội thoại đang được chọn
-    const [activeId, setActiveId] = useState(1);
+    const [activeId, setActiveId] = useState(null);
+
+    const activeIdRef = useRef(activeId);
 
     // Danh sách tin nhắn của từng hội thoại
     const [messages, setMessages] = useState(initialMessages);
@@ -33,6 +29,7 @@ function MainLayout() {
 
     // Chọn hội thoại
     const handleSelectConversation = (id) => {
+        activeIdRef.current = id;
         setActiveId(id);
 
         // Đánh dấu hội thoại đã đọc
@@ -92,6 +89,108 @@ function MainLayout() {
                 (a, b) => b.timestamp - a.timestamp
             );
         });
+
+        handleAutoReply(activeId, trimmedContent);
+    };
+
+    // Mô phỏng người đối thoại tự động trả lời
+    const handleAutoReply = (conversationId, userMessage) => {
+        const conversation = conversations.find(
+            (item) => item.id === conversationId
+        );
+
+        if (!conversation) return;
+
+        const delay = getReplyDelay();
+
+        setTimeout(() => {
+            const reply = generateAutoReply({
+                conversation,
+                lastUserMessage: userMessage,
+            });
+
+            const incomingMessage = createIncomingMessage(reply);
+
+            setMessages((prev) => ({
+                ...prev,
+                [conversationId]: [
+                    ...(prev[conversationId] || []),
+                    incomingMessage,
+                ],
+            }));
+
+            setConversations((prev) => {
+                const updated = prev.map((item) =>
+                    item.id === conversationId
+                        ? {
+                            ...item,
+                            lastMessage: `${conversation.name}: ${reply.content}`,
+                            time: incomingMessage.time,
+                            timestamp: incomingMessage.sentAt,
+                            unread:
+                                activeIdRef.current === conversationId
+                                    ? 0
+                                    : item.unread + 1,
+                        }
+                        : item
+                );
+
+                return updated.sort(
+                    (a, b) => b.timestamp - a.timestamp
+                );
+            });
+        }, delay);
+    };
+
+    // Chủ động mô phỏng tin nhắn đến
+    // Chủ động mô phỏng tin nhắn đến từ hội thoại được chọn
+    const handleSimulateIncoming = (conversationId) => {
+        const targetConversation = conversations.find(
+            (item) => item.id === conversationId
+        );
+
+        if (!targetConversation) return;
+
+        // Xác định người gửi
+        const senderId =
+            conversationId === 1 ? 2 : conversationId + 1;
+
+        // Tạo tin nhắn mới
+        const incomingMessage = createIncomingMessage({
+            senderId,
+            content: generateIncomingContent(),
+        });
+
+        // Thêm tin nhắn vào đúng hội thoại
+        setMessages((prev) => ({
+            ...prev,
+            [conversationId]: [
+                ...(prev[conversationId] || []),
+                incomingMessage,
+            ],
+        }));
+
+        // Cập nhật danh sách hội thoại
+        setConversations((prev) => {
+            const updated = prev.map((item) =>
+                item.id === conversationId
+                    ? {
+                        ...item,
+                        lastMessage: `${targetConversation.name}: ${incomingMessage.content}`,
+                        time: incomingMessage.time,
+                        timestamp: incomingMessage.sentAt,
+                        unread:
+                            activeIdRef.current === conversationId
+                                ? 0
+                                : item.unread + 1,
+                    }
+                    : item
+            );
+
+            return updated.sort(
+                (a, b) => b.timestamp - a.timestamp
+            );
+        });
     };
 
     return (
@@ -113,6 +212,8 @@ function MainLayout() {
                 messages={activeMessages}
                 currentUser={currentUser}
                 onSendMessage={handleSendMessage}
+                onSimulateIncoming={handleSimulateIncoming}
+                conversations={conversations}
             />
 
         </div>
