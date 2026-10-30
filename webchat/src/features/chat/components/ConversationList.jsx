@@ -1,3 +1,4 @@
+
 import { Search, Plus, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 
@@ -8,19 +9,23 @@ function ConversationList({
 }) {
     const [keyword, setKeyword] = useState("");
 
-    const filteredConversations = conversations.filter(
-        (conversation) =>
-            conversation.name
-                .toLowerCase()
-                .includes(keyword.toLowerCase())
-    );
+    // Chuẩn hóa từ khóa tìm kiếm
+    const normalizedKeyword = keyword.trim().toLocaleLowerCase("vi");
+
+    // Lọc hội thoại theo tên
+    const filteredConversations = conversations.filter((conversation) => {
+        const conversationName = conversation.name
+            .trim()
+            .toLocaleLowerCase("vi");
+
+        return conversationName.includes(normalizedKeyword);
+    });
 
     return (
         <section className="conversation-panel">
 
             {/* Header */}
             <div className="conversation-header">
-
                 <div>
                     <h2>Messages</h2>
                     <p>Your conversations</p>
@@ -35,12 +40,10 @@ function ConversationList({
                         <Plus size={20} />
                     </button>
                 </div>
-
             </div>
 
             {/* Search */}
             <div className="conversation-search">
-
                 <Search size={18} />
 
                 <input
@@ -49,16 +52,13 @@ function ConversationList({
                     value={keyword}
                     onChange={(e) => setKeyword(e.target.value)}
                 />
-
             </div>
 
             {/* Conversation list */}
             <div className="conversation-list">
 
                 {filteredConversations.length > 0 ? (
-
                     filteredConversations.map((conversation) => (
-
                         <button
                             key={conversation.id}
                             className={`conversation-item ${
@@ -68,9 +68,7 @@ function ConversationList({
                             }`}
                             onClick={() => onSelect(conversation.id)}
                         >
-
                             <div className="conversation-avatar">
-
                                 <img
                                     src={conversation.avatar}
                                     alt={conversation.name}
@@ -79,23 +77,18 @@ function ConversationList({
                                 {conversation.status === "online" && (
                                     <span className="online-indicator"></span>
                                 )}
-
                             </div>
 
                             <div className="conversation-info">
-
                                 <div className="conversation-top">
-
                                     <h4>{conversation.name}</h4>
 
                                     <span className="conversation-time">
                                         {conversation.time}
                                     </span>
-
                                 </div>
 
                                 <div className="conversation-bottom">
-
                                     <p>{conversation.lastMessage}</p>
 
                                     {conversation.unread > 0 && (
@@ -103,25 +96,19 @@ function ConversationList({
                                             {conversation.unread}
                                         </span>
                                     )}
-
                                 </div>
-
                             </div>
-
                         </button>
-
                     ))
-
                 ) : (
-
                     <div className="empty-conversation">
                         No conversations found
                     </div>
-
                 )}
 
             </div>
 
+            {/* Footer */}
             <div className="conversation-footer">
                 <span>{conversations.length} conversations</span>
                 <span>WebChat</span>
