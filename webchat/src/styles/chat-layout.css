@@ -648,15 +648,13 @@ textarea:focus-visible {
 
 .message-bubble {
     max-width: 580px;
-
     padding: 11px 15px;
-
     border-radius: 12px;
-
     font-size: 13px;
     line-height: 1.6;
-
     overflow-wrap: anywhere;
+    /* Giữ nguyên các dòng khi người dùng xuống dòng */
+    white-space: pre-wrap;
 }
 
 .message-theirs .message-bubble {

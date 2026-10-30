@@ -28,10 +28,11 @@ function ChatWindow({
     }, [messages]);
 
     const handleSend = () => {
-        if (!message.trim()) return;
+        const content = message.trim();
 
-        onSendMessage(message.trim());
+        if (!content) return;
 
+        onSendMessage(content);
         setMessage("");
     };
 
